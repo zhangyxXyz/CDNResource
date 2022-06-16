@@ -3,7 +3,7 @@ name: cdn资源腾讯云cos同步
 on: 
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -11,7 +11,7 @@ jobs:
         
     steps:
     - name: 检出仓库代码
-      uses: actions/checkout@master
+      uses: actions/checkout@main
 
     - name: 安装腾讯云依赖
       run: |
