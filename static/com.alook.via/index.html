@@ -765,7 +765,27 @@
                     }
                 });
             window.addEventListener('resize', move_input);
-        </script>
 
+            /* 主题模式切换 */
+            let media = window.matchMedia('(prefers-color-scheme: dark)');
+            let callback = (e) => {
+                let prefersDarkMode = e.matches;
+                if (prefersDarkMode) {
+                    document
+                        .documentElement
+                        .setAttribute('data-theme', 'dark');
+                } else {
+                    document
+                        .documentElement
+                        .setAttribute('data-theme', 'light');
+                }
+                javascript:location.reload();
+            };
+            if (typeof media.addEventListener === 'function') {
+                media.addEventListener('change', callback);
+            } else if (typeof media.addListener === 'function') {
+                media.addListener(callback);
+            }
+        </script>
     </body>
 </html>
