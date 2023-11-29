@@ -38,51 +38,21 @@
         }
 
         :root {
-            --background: #ffffff;
-            --background-title: #ffffff;
-            --background-app-item: #ffffff;
-            --background-one-word: #ffffff;
+            --background: #000;
+            --background-title: #000;
+            --background-app-item: #000;
+            --background-one-word: #000;
             --foreground-title: #878787;
-            --foreground-search: #4a4266;
+            --foreground-search: #878787;
             --border-suggest: #3f3f3f;
-            --input-shadow: rgba(70, 70, 70, .255);
-            --background-suggest: #ffffff;
-            --background-suggest-border: #cccccc;
-            --background-suggest-active: #f0f0f0;
-            --foreground-suggest: #3f3f3f;
+            --input-shadow: rgba(233, 233, 233, .5);
+            --background-suggest: #000;
+            --background-suggest-border: #3f3f3f;
+            --background-suggest-active: #282c34;
+            --foreground-suggest: #878787;
             --foreground-suggest-close: #888;
-            --url: #4a4266;
+            --url: #878787;
             --hitokoto-color: #878787;
-        }
-
-        /* 暗色模式适配 */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --background: #000;
-                --background-title: #000;
-                --background-app-item: #000;
-                --background-one-word: #000;
-                --foreground-title: #878787;
-                --foreground-search: #878787;
-                --border-suggest: #3f3f3f;
-                --input-shadow: rgba(233, 233, 233, .5);
-                --background-suggest: #000;
-                --background-suggest-border: #3f3f3f;
-                --background-suggest-active: #282c34;
-                --foreground-suggest: #878787;
-                --foreground-suggest-close: #888;
-                --url: #878787;
-                --hitokoto-color: #878787;
-            }
-
-            body {
-                background-image: unset !important;
-            }
-
-            .search_bar span i {
-                background: url("./img/clear_dark.png") no-repeat center !important;
-                background-size: 16px !important;
-            }
         }
 
         /*翻译
@@ -97,7 +67,7 @@
             background-size: 100% !important;
             background-repeat: no-repeat;
             background-color: var(--background);
-            background-image: url("./img/bg.jpg");
+            background-image: unset !important;
         }
 
         /*翻译
@@ -158,8 +128,8 @@
             float: right;
             width: 35px;
             height: 40px;
-            background: url("./img/clear.png") no-repeat center;
-            background-size: 16px;
+            background: url("./img/clear_dark.png") no-repeat center !important;
+            background-size: 16px !important;
         }
 
         .search_bar .si {
@@ -526,7 +496,7 @@
             <br/>
 
             <div class="box">
-                <a href="alook://navigator"></a>
+                <a href="https://cxy521.com/"></a>
                 <p><img class="icon" src="./img/导航.png"></p>
                 <p class="url">导航</p>
             </div>
