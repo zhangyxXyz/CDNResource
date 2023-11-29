@@ -74,15 +74,6 @@
                 --url: #878787;
                 --hitokoto-color: #878787;
             }
-
-            body {
-                background-image: unset !important;
-            }
-
-            .search_bar span i {
-                background: url("./img/clear_dark.png") no-repeat center !important;
-                background-size: 16px !important;
-            }
         }
 
         /*翻译
@@ -98,6 +89,12 @@
             background-repeat: no-repeat;
             background-color: var(--background);
             background-image: url("./img/bg.jpg");
+        }
+        /* 暗色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-image: unset !important;
+            }
         }
 
         /*翻译
@@ -160,6 +157,13 @@
             height: 40px;
             background: url("./img/clear.png") no-repeat center;
             background-size: 16px;
+        }
+        /* 暗色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            .search_bar span i {
+                background: url("./img/clear_dark.png") no-repeat center !important;
+                background-size: 16px !important;
+            }
         }
 
         .search_bar .si {
