@@ -49,33 +49,11 @@ body {
 
     @font-face {
         font-family: 'GenSenMaruGothic TW TTF';
-        src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.woff2') format('woff2'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.woff') format('woff'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.ttf') format('truetype'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.svg#GenSenMaruGothicTW-Bold-TTF') format('svg');
-        font-weight: bold;
-        font-style: normal;
-        font-display: swap;
-    }
-
-    @font-face {
-        font-family: 'GenSenMaruGothic TW TTF';
         src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-ExtraLight-TTF.woff2') format('woff2'),
             url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-ExtraLight-TTF.woff') format('woff'),
             url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-ExtraLight-TTF.ttf') format('truetype'),
             url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-ExtraLight-TTF.svg#GenSenMaruGothicTW-ExtraLight-TTF') format('svg');
         font-weight: 200;
-        font-style: normal;
-        font-display: swap;
-    }
-
-    @font-face {
-        font-family: 'GenSenMaruGothic TW TTF';
-        src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.woff2') format('woff2'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.woff') format('woff'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.ttf') format('truetype'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.svg#GenSenMaruGothicTW-Heavy-TTF') format('svg');
-        font-weight: 900;
         font-style: normal;
         font-display: swap;
     }
@@ -93,6 +71,17 @@ body {
 
     @font-face {
         font-family: 'GenSenMaruGothic TW TTF';
+        src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.woff2') format('woff2'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.woff') format('woff'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.ttf') format('truetype'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.svg#GenSenMaruGothicTW-Regular-TTF') format('svg');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'GenSenMaruGothic TW TTF';
         src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Medium-TTF.woff2') format('woff2'),
             url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Medium-TTF.woff') format('woff'),
             url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Medium-TTF.ttf') format('truetype'),
@@ -104,11 +93,22 @@ body {
 
     @font-face {
         font-family: 'GenSenMaruGothic TW TTF';
-        src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.woff2') format('woff2'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.woff') format('woff'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.ttf') format('truetype'),
-            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Regular-TTF.svg#GenSenMaruGothicTW-Regular-TTF') format('svg');
-        font-weight: normal;
+        src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.woff2') format('woff2'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.woff') format('woff'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.ttf') format('truetype'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Bold-TTF.svg#GenSenMaruGothicTW-Bold-TTF') format('svg');
+        font-weight: bold;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'GenSenMaruGothic TW TTF';
+        src: url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.woff2') format('woff2'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.woff') format('woff'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.ttf') format('truetype'),
+            url('https://cdn.onlyzyx.com/static/font/GenSenMaruGothicTW-Heavy-TTF.svg#GenSenMaruGothicTW-Heavy-TTF') format('svg');
+        font-weight: 900;
         font-style: normal;
         font-display: swap;
     }
