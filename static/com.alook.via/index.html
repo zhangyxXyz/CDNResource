@@ -2434,6 +2434,7 @@
                 const targetX = window.innerWidth - hitokotoEl.offsetWidth - margin;
                 const targetY = window.innerHeight - hitokotoEl.offsetHeight - margin;
                 if (!hitoInitialized) {
+                    if (hitokotoEl.offsetWidth === 0) { hitoRafId = requestAnimationFrame(hitokotoLoop); return; }
                     hitoX = targetX; hitoY = targetY; hitoInitialized = true;
                 } else {
                     hitoX += (targetX - hitoX) * SMOOTHING;
