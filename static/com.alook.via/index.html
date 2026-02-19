@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- 声明页面已自主处理深色/亮色，阻止 Dark Reader 等扩展强行接管 -->
+    <meta name="color-scheme" content="dark light">
+    <meta name="darkreader-lock">
     <meta name="theme-color" content="#0a0a0a" id="theme-color-meta">
     <title id="title">导航</title>
     <script>
@@ -24,15 +27,34 @@
         }
 
         html {
+            color-scheme: dark light;
             min-height: 100%;
+        }
+
+        html::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0a0a 0%, #0d1117 50%, #161b22 100%);
+        }
+
+        html[data-theme="light"]::before {
+            background:
+                radial-gradient(circle at 0% 0%, #e0f2fe 0, transparent 55%),
+                radial-gradient(circle at 80% 0%, #e5e7eb 0, #f9fafb 60%);
+        }
+
+        html[data-theme="light"].no-matrix::before {
+            background:
+                radial-gradient(circle at 0% 0%, #b8d8ef 0, transparent 55%),
+                radial-gradient(circle at 80% 0%, #c9cdd4 0, #d8dce3 60%);
         }
 
         body {
             min-height: 100%;
             overflow: hidden;
             touch-action: none;
-            background: linear-gradient(135deg, #0a0a0a 0%, #0d1117 50%, #161b22 100%);
-            background-attachment: fixed;
             font-family: 'Consolas', 'Monaco', monospace;
         }
 
@@ -42,13 +64,6 @@
             right: 0;
             overscroll-behavior: none;
             -webkit-overflow-scrolling: auto;
-        }
-
-        /* ===== 亮色主题 ===== */
-        html[data-theme="light"] body {
-            background:
-                radial-gradient(circle at 0% 0%, #e0f2fe 0, transparent 55%),
-                radial-gradient(circle at 80% 0%, #e5e7eb 0, #f9fafb 60%);
         }
 
         /* 矩阵雨画布 */
@@ -65,7 +80,6 @@
 
         html[data-theme="light"] #matrix-canvas {
             opacity: 0.75;
-            mix-blend-mode: multiply;
         }
 
         /* 浮动粒子 */
@@ -119,60 +133,87 @@
             animation: none !important;
         }
 
-        /* ===== 天气组件：仅文字区域小范围毛玻璃，浅色不显色块 ===== */
+        /* ===== 天气组件 ===== */
         .weather-container {
             position: fixed;
             top: 15px;
             left: 15px;
-            transform: scale(0.75);
+            transform: scale(0.9);
             transform-origin: left top;
             z-index: 100;
-            opacity: 0.95;
-            border-radius: 8px;
-            overflow: visible;
-            isolation: isolate;
+            opacity: 0;
+            transition: opacity 0.6s ease;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
             user-select: none !important;
         }
 
-        .weather-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            z-index: 2;
-            pointer-events: none;
+        .weather-container.loaded {
+            opacity: 1;
         }
 
-        #weather {
-            float: right;
-            width: 260px;
-            height: 88px;
-            min-width: 180px;
-            border: none !important;
-            outline: none !important;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
-            -webkit-appearance: none !important;
-            position: relative;
-            z-index: 1;
+        #weather-widget {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 14px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            white-space: nowrap;
         }
 
-        #weather:focus,
-        #weather:active,
-        #weather:hover {
-            outline: none !important;
-            border: none !important;
-            box-shadow: none !important;
+        #weather-widget .w-icon {
+            font-size: 34px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        #weather-widget .w-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        #weather-widget .w-main {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        #weather-widget .w-temp {
+            font-size: 26px;
+            font-weight: bold;
+            color: #e8edf2;
+        }
+
+        #weather-widget .w-desc {
+            font-size: 13px;
+            color: #b0bec5;
+        }
+
+        #weather-widget .w-sub {
+            font-size: 12px;
+            color: #90a4ae;
+            display: flex;
+            gap: 12px;
+        }
+
+        html[data-theme="light"] #weather-widget .w-temp {
+            color: #1e293b;
+        }
+
+        html[data-theme="light"] #weather-widget .w-desc {
+            color: #334155;
+        }
+
+        html[data-theme="light"] #weather-widget .w-sub {
+            color: #475569;
         }
 
         @media (max-width: 768px) {
             .weather-container {
-                transform: scale(0.7);
+                transform: scale(0.75);
                 top: 10px;
                 left: 10px;
             }
@@ -195,6 +236,7 @@
             transform: translateZ(0);
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
+            color-scheme: dark light;
         }
 
         @media (max-width: 768px) {
@@ -204,7 +246,7 @@
         }
 
         html[data-theme="light"] .top-glass-bar {
-            background: rgba(255, 255, 255, 0.58);
+            background: rgba(186, 210, 230, 0.45);
             backdrop-filter: blur(18px) saturate(170%);
             -webkit-backdrop-filter: blur(18px) saturate(170%);
         }
@@ -414,6 +456,11 @@
             margin-top: 0;
         }
 
+        .search-engine-row .custom-select {
+            display: block;
+            width: 100%;
+        }
+
         .custom-select {
             position: relative;
             display: inline-block;
@@ -475,7 +522,7 @@
             position: absolute;
             top: 28px;
             left: 0;
-            right: auto;
+            right: 0;
             min-width: 120px;
             margin-top: 0;
             background: rgba(10, 22, 28, 0.96);
@@ -554,12 +601,20 @@
 
         /* spacer 同步收缩 */
         body.hide-search .grid-view-spacer {
-            height: 98px;
+            height: 70px;
+        }
+
+        body.hide-search .compact-view-scroll .grid-view-spacer {
+            height: 70px;
         }
 
         @media (max-width: 768px) {
             body.hide-search .grid-view-spacer {
-                height: 98px;
+                height: 70px;
+            }
+
+            body.hide-search .compact-view-scroll .grid-view-spacer {
+                height: 70px;
             }
         }
 
@@ -633,6 +688,41 @@
         html[data-theme="light"] #suggest .close:hover {
             color: #475569;
         }
+
+        html[data-theme="light"] .custom-select-trigger {
+            background-image: linear-gradient(135deg, #0d9488, #0369a1, #5b21b6, #be185d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        html[data-theme="light"] .custom-select.opened .custom-select-trigger {
+            background-color: rgba(0, 0, 0, 0.06);
+        }
+
+        html[data-theme="light"] .custom-options {
+            background: rgba(226, 232, 240, 0.94);
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            border-color: rgba(148, 163, 184, 0.4);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        html[data-theme="light"] .custom-option {
+            color: #475569;
+        }
+
+        html[data-theme="light"] .custom-option:hover {
+            background: rgba(203, 213, 225, 0.6);
+            color: #334155;
+        }
+
+        html[data-theme="light"] .custom-option.selected {
+            background: rgba(203, 213, 225, 0.5);
+            color: #334155;
+        }
+
 
         @supports (-webkit-touch-callout: none) {
             .search-area {
@@ -976,15 +1066,29 @@
                 min-width: unset;
                 bottom: 12px;
                 top: auto;
-                text-align: left;
                 padding: 6px 14px;
                 border-radius: 14px;
                 font-size: 0.8rem;
                 line-height: 1.4;
+                display: flex;
+                align-items: flex-end;
+                gap: 4px;
+            }
+
+            .hitokoto-text {
+                flex: 1;
+                min-width: 0;
+                text-align: right;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
+            }
+
+            .hitokoto-link {
+                flex-shrink: 0;
+                align-self: flex-end;
+                margin-left: 0;
             }
         }
 
@@ -1597,35 +1701,68 @@
             color: #64748b;
         }
 
-        /* PC hover desc tooltip */
-        @media (hover: hover) {
-            .compact-card[data-desc]:hover::after {
-                content: attr(data-desc);
-                position: absolute;
-                bottom: calc(100% + 6px);
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(15, 20, 25, 0.92);
-                color: #c9d1d9;
-                font-size: 0.75rem;
-                padding: 5px 10px;
-                border-radius: 6px;
-                white-space: nowrap;
-                max-width: 220px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                pointer-events: none;
-                z-index: 500;
-                border: 1px solid rgba(0, 255, 136, 0.2);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            }
+        html[data-theme="light"] .compact-card-name {
+            filter: brightness(0.82) saturate(0.88);
+        }
 
-            html[data-theme="light"] .compact-card[data-desc]:hover::after {
-                background: rgba(240, 248, 255, 0.96);
-                color: #334155;
-                border-color: rgba(14, 165, 233, 0.3);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
+        /* compact hover tooltip */
+        #compact-tooltip {
+            position: fixed;
+            background: rgba(30, 35, 40, 0.88);
+            --active-color: #00ff88;
+            border: 1px solid color-mix(in srgb, var(--active-color), transparent 65%);
+            box-shadow: 0 0 28px color-mix(in srgb, var(--active-color), transparent 88%),
+                0 8px 24px rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 12px 16px;
+            min-width: 220px;
+            max-width: 340px;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 500;
+            backdrop-filter: blur(12px);
+            pointer-events: none;
+            display: none;
+        }
+
+        #compact-tooltip.ct-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ct-desc {
+            font-size: 0.8rem;
+            color: #8b949e;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .ct-link {
+            display: block;
+            font-size: 0.75rem;
+            color: #00d9ff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        html[data-theme="light"] #compact-tooltip {
+            background: rgba(224, 242, 254, 0.92);
+            backdrop-filter: blur(16px) saturate(160%);
+            border-color: rgba(186, 230, 253, 0.7);
+            box-shadow: 0 8px 28px rgba(14, 165, 233, 0.12), 0 0 0 1px rgba(14, 165, 233, 0.06);
+        }
+
+        html[data-theme="light"] .ct-desc {
+            color: #4b5563;
+        }
+
+        html[data-theme="light"] .ct-link {
+            filter: brightness(0.75);
         }
 
         /* 连接点扩散动画 */
@@ -1681,8 +1818,19 @@
 <body>
     <!-- 天气组件 -->
     <div class="weather-container">
-        <iframe id="weather" scrolling="no" frameborder="0" allowtransparency="true"
-            src="https://i.tianqi.com?c=code&id=35&color=%23C6C6C6&icon=1&py=beijing&site=34"></iframe>
+        <div id="weather-widget">
+            <span class="w-icon">⛅</span>
+            <div class="w-info">
+                <div class="w-main">
+                    <span class="w-temp">--°</span>
+                    <span class="w-desc">获取中...</span>
+                </div>
+                <div class="w-sub">
+                    <span id="w-location">--</span>
+                    <span id="w-humidity">湿度 --%</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- 搜索框 -->
@@ -1761,6 +1909,10 @@
         <div class="tooltip-title" id="tooltipTitle"></div>
         <div class="tooltip-desc" id="tooltipDesc"></div>
         <a class="tooltip-link" id="tooltipLink" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+    <div id="compact-tooltip">
+        <div class="ct-desc" id="ct-desc"></div>
+        <a class="ct-link" id="ct-link" target="_blank" rel="noopener noreferrer"></a>
     </div>
 
     <!-- 一言 -->
@@ -1862,7 +2014,7 @@
 
         function drawMatrix() {
             var light = isLight();
-            ctx.fillStyle = light ? 'rgba(226, 232, 240, 0.2)' : 'rgba(10, 10, 10, 0.05)';
+            ctx.fillStyle = light ? 'rgba(180, 192, 210, 0.25)' : 'rgba(10, 10, 10, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let i = 0; i < drops.length; i++) {
@@ -1898,6 +2050,7 @@
         function startMatrixRain() {
             if (matrixRainIntervalId) return;
             canvas.style.display = '';
+            document.documentElement.classList.remove('no-matrix');
             matrixRainIntervalId = setInterval(drawMatrix, 33);
         }
         function stopMatrixRain() {
@@ -1906,6 +2059,7 @@
                 matrixRainIntervalId = null;
             }
             canvas.style.display = 'none';
+            document.documentElement.classList.add('no-matrix');
         }
         if (matrixRainEnabled) startMatrixRain();
         else stopMatrixRain();
@@ -2193,15 +2347,16 @@
             const iconHtml = fanIconSvg.replace('spinning', '');
 
             if (isError) {
-                hitokotoEl.innerHTML = `${iconHtml} ${escapeHtml(defaultHitokoto)}`;
+                hitokotoEl.innerHTML = `<span class="hitokoto-text">${iconHtml} ${escapeHtml(defaultHitokoto)}</span>`;
                 const icon = hitokotoEl.querySelector('.hitokoto-icon');
                 if (icon) icon.onclick = (e) => { e.preventDefault(); e.stopPropagation(); fetchHitokoto(); };
+                hitoInitialized = false;
                 return;
             }
             if (!data) return;
 
             const text = data.hitokoto || '';
-            let html = `${iconHtml} ${escapeHtml(text)}`;
+            let textHtml = `${iconHtml} ${escapeHtml(text)}`;
 
             // 兼容自有API格式
             const from = data.from_who || data.from || '';
@@ -2209,21 +2364,22 @@
             if (from) {
                 let fromText = escapeHtml(from);
                 if (fromWork && fromWork !== from) fromText += `「${escapeHtml(fromWork)}」`;
-                html += ` <span style="display:inline-block;white-space:nowrap"> — <span class="hitokoto-from">「${fromText}」</span></span>`;
+                textHtml += ` <span style="display:inline-block;white-space:nowrap"> — <span class="hitokoto-from">「${fromText}」</span></span>`;
             }
 
+            let linkHtml = '';
             if (data.uuid) {
                 const link = `https://service.onlyzyx.com/oneword/?uuid=${data.uuid}`;
-                html += `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hitokoto-link" style="margin-left:6px;text-decoration:none;">🔗</a>`;
+                linkHtml = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="hitokoto-link" style="text-decoration:none;">🔗</a>`;
             }
 
-            hitokotoEl.innerHTML = html;
+            hitokotoEl.innerHTML = `<span class="hitokoto-text">${textHtml}</span>${linkHtml}`;
 
             const icon = hitokotoEl.querySelector('.hitokoto-icon');
             if (icon) {
                 icon.onclick = (e) => { e.preventDefault(); e.stopPropagation(); fetchHitokoto(); };
             }
-            if (window.innerWidth > 768) requestAnimationFrame(updateHitokotoPosition);
+            hitoInitialized = false;
         }
 
         function fetchHitokoto() {
@@ -2262,11 +2418,12 @@
                 });
         }
 
-        // 一言位置（按视口宽度区分：>768 右下角定位，<=768 交给 CSS 固定底部）
+        // 一言位置（按视口宽度区分：>768 右下角缓动，<=768 交给 CSS 固定底部）
         let hitoX = 0, hitoY = 0, hitoInitialized = false;
         let lastHitoWide = window.innerWidth > 768;
+        let hitoRafId = null;
 
-        function updateHitokotoPosition() {
+        function hitokotoLoop() {
             if (!hitokotoEl) return;
             const wide = window.innerWidth > 768;
             if (wide) {
@@ -2278,28 +2435,48 @@
                 const targetY = window.innerHeight - hitokotoEl.offsetHeight - margin;
                 if (!hitoInitialized) {
                     hitoX = targetX; hitoY = targetY; hitoInitialized = true;
+                } else {
+                    hitoX += (targetX - hitoX) * SMOOTHING;
+                    hitoY += (targetY - hitoY) * SMOOTHING;
                 }
-                hitoX += (targetX - hitoX) * SMOOTHING;
-                hitoY += (targetY - hitoY) * SMOOTHING;
                 hitokotoEl.style.left = hitoX + 'px';
                 hitokotoEl.style.top = hitoY + 'px';
             } else {
-                lastHitoWide = false;
-                hitokotoEl.style.left = '';
-                hitokotoEl.style.top = '';
-                hitokotoEl.style.right = '';
-                hitokotoEl.style.bottom = '';
+                if (lastHitoWide) {
+                    lastHitoWide = false;
+                    hitokotoEl.style.left = '';
+                    hitokotoEl.style.top = '';
+                    hitokotoEl.style.right = '';
+                    hitokotoEl.style.bottom = '';
+                }
             }
+            hitoRafId = requestAnimationFrame(hitokotoLoop);
         }
-        window.addEventListener('resize', updateHitokotoPosition);
-        if (hitokotoEl) requestAnimationFrame(updateHitokotoPosition);
+
+        function startHitokotoLoop() {
+            if (!hitokotoEl || hitoRafId) return;
+            hitoRafId = requestAnimationFrame(hitokotoLoop);
+        }
+
+        function stopHitokotoLoop() {
+            if (hitoRafId) { cancelAnimationFrame(hitoRafId); hitoRafId = null; }
+        }
+
+        if (hitokotoEl) startHitokotoLoop();
+
+        let tagsRafId = null;
+
+        function startTagsLoop() {
+            if (tagsRafId) return;
+            tagsRafId = requestAnimationFrame(updateTags);
+        }
+
+        function stopTagsLoop() {
+            if (tagsRafId) { cancelAnimationFrame(tagsRafId); tagsRafId = null; }
+        }
 
         function updateTags() {
-
-            if (cloudContainer.style.display === 'none') {
-                requestAnimationFrame(updateTags);
-                return;
-            }
+            tagsRafId = null;
 
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2 + 40;
@@ -2418,7 +2595,7 @@
                 if (connectorRipple) { connectorRipple.style.opacity = 0; connectorRipple.style.animation = 'none'; }
             }
 
-            requestAnimationFrame(updateTags);
+            tagsRafId = requestAnimationFrame(updateTags);
         }
 
         // 鼠标/触摸
@@ -2485,6 +2662,8 @@
             compactViewContainer.classList.remove('active');
 
             if (currentView === 'grid') {
+                stopTagsLoop();
+                stopHitokotoLoop();
                 cloudContainer.style.display = 'none';
                 compactViewContainer.style.display = 'none';
                 gridViewContainer.style.display = 'block';
@@ -2495,6 +2674,8 @@
                 }, 10);
                 if (gridViewContainer.innerHTML === '') renderGrid();
             } else if (currentView === 'compact') {
+                stopTagsLoop();
+                stopHitokotoLoop();
                 cloudContainer.style.display = 'none';
                 gridViewContainer.style.display = 'none';
                 compactViewContainer.style.display = 'block';
@@ -2506,6 +2687,8 @@
                 if (compactViewContainer.innerHTML === '') renderCompact();
             } else {
                 cloudContainer.style.display = 'block';
+                startTagsLoop();
+                startHitokotoLoop();
                 setTimeout(() => {
                     if (currentView === 'cloud') {
                         gridViewContainer.style.display = 'none';
@@ -2640,16 +2823,25 @@
                         : '';
 
                     const relAttr = target === '_blank' ? ' rel="noopener noreferrer"' : '';
-                    const descAttr = s.desc ? ` data-desc="${escapeHtml(s.desc.split('\n')[0])}"` : '';
-                    const descDisplay = s.desc ? s.desc.split('\n')[0] : '';
+                    const firstLine = s.desc ? s.desc.split('\n')[0] : '';
+                    const descAttr = firstLine ? ` data-desc="${escapeHtml(firstLine)}"` : '';
+                    let descHtmlCompact = firstLine ? formatServiceDesc({ desc: firstLine }) : '';
+                    if (firstLine.includes('[oneword]')) {
+                        const uniqueId = `compact-oneword-${sIndex}`;
+                        descHtmlCompact = descHtmlCompact.replace(
+                            /\[oneword\]/g,
+                            `<span class="oneword-inline loading" id="${uniqueId}" style="color:inherit">一言获取中...</span>`
+                        );
+                        setTimeout(() => fetchOnewordTo(uniqueId), 200 + sIndex * 50);
+                    }
 
                     html += `
-                        <a class="compact-card" href="${href}" target="${target}"${relAttr}${descAttr} style="border-color:${tagColor.replace(')', ',0.3)').replace('hsl', 'hsla')}" onclick="${s.url === '#' ? 'return false;' : ''}">
+                        <a class="compact-card" href="${href}" target="${target}"${relAttr}${descAttr} data-svc-index="${sIndex}" data-color="${escapeHtml(tagColor)}" style="border-color:${tagColor.replace(')', ',0.3)').replace('hsl', 'hsla')}" onclick="${s.url === '#' ? 'return false;' : ''}">
                             <div class="compact-card-header">
                                 ${iconHtml}
                                 <span class="compact-card-name" style="color:${tagColor}">${escapeHtml(s.name)}</span>
                             </div>
-                            ${descDisplay ? `<div class="compact-card-desc">${escapeHtml(descDisplay)}</div>` : ''}
+                            ${descHtmlCompact ? `<div class="compact-card-desc">${descHtmlCompact}</div>` : ''}
                         </a>`;
                 });
                 html += `</div></div>`;
@@ -2684,6 +2876,89 @@
 
         viewBtn.addEventListener('click', toggleView);
         applyView();
+
+        // ---- Compact Tooltip ----
+        const ctEl = document.getElementById('compact-tooltip');
+        const ctDesc = document.getElementById('ct-desc');
+        const ctLink = document.getElementById('ct-link');
+        let ctHideTimer = null;
+
+        const hoverSupported = window.matchMedia('(hover: hover)').matches;
+
+        function showCompactTooltip(svc, cardEl, color) {
+            if (!hoverSupported) return;
+            clearTimeout(ctHideTimer);
+
+            ctEl.style.setProperty('--active-color', color);
+
+            // 完整 desc
+            let dHtml = svc.desc ? formatServiceDesc(svc) : '';
+            if (svc.desc && svc.desc.includes('[oneword]')) {
+                const owId = `ct-oneword-${Date.now()}`;
+                dHtml = dHtml.replace(
+                    /\[oneword\]/g,
+                    `<span class="oneword-inline loading" id="${owId}" style="color:inherit">一言获取中...</span>`
+                );
+                setTimeout(() => fetchOnewordTo(owId), 50);
+            }
+            ctDesc.innerHTML = dHtml;
+            ctDesc.style.display = dHtml ? '' : 'none';
+
+            // URL
+            let displayUrl = svc.url;
+            if (svc.url !== '#' && !svc.url.startsWith('http')) {
+                displayUrl = window.location.origin + svc.url;
+            }
+            if (svc.url === '#') {
+                ctLink.style.display = 'none';
+            } else {
+                ctLink.href = svc.url;
+                ctLink.textContent = displayUrl;
+                ctLink.style.display = '';
+            }
+
+            ctEl.style.display = 'block';
+            requestAnimationFrame(() => {
+                const rect = cardEl.getBoundingClientRect();
+                const vpW = window.innerWidth;
+                let left = rect.left;
+                let top = rect.top - ctEl.offsetHeight - 8;
+                if (top < 8) top = rect.bottom + 8;
+                if (left + ctEl.offsetWidth > vpW - 8) left = vpW - ctEl.offsetWidth - 8;
+                if (left < 8) left = 8;
+                ctEl.style.left = left + 'px';
+                ctEl.style.top = top + 'px';
+                ctEl.classList.add('ct-visible');
+            });
+        }
+
+        function hideCompactTooltip() {
+            ctHideTimer = setTimeout(() => {
+                ctEl.classList.remove('ct-visible');
+                setTimeout(() => { if (!ctEl.classList.contains('ct-visible')) ctEl.style.display = 'none'; }, 200);
+            }, 120);
+        }
+
+        ctEl.addEventListener('mouseenter', () => clearTimeout(ctHideTimer));
+        ctEl.addEventListener('mouseleave', hideCompactTooltip);
+
+        compactViewContainer.addEventListener('mouseover', (e) => {
+            if (!hoverSupported) return;
+            const card = e.target.closest('.compact-card');
+            if (!card) return;
+            const idx = parseInt(card.dataset.svcIndex, 10);
+            if (isNaN(idx)) return;
+            showCompactTooltip(services[idx], card, card.dataset.color || '#00ff88');
+        });
+
+        compactViewContainer.addEventListener('mouseout', (e) => {
+            if (!hoverSupported) return;
+            const card = e.target.closest('.compact-card');
+            if (!card) return;
+            if (card.contains(e.relatedTarget)) return;
+            if (ctEl.contains(e.relatedTarget)) return;
+            hideCompactTooltip();
+        });
 
         // ===== 筛选 =====
         const filterBtn = document.getElementById('filterBtn');
@@ -3054,11 +3329,6 @@
 
                 htmlEl.setAttribute('data-theme', effectiveTheme);
 
-                var w = document.getElementById('weather');
-                if (w) {
-                    w.src = 'https://i.tianqi.com?c=code&id=35&icon=1&site=34&color=' + (effectiveTheme === 'light' ? '%23374151' : '%23C6C6C6');
-                }
-
                 if (themeMeta) {
                     themeMeta.content = effectiveTheme === 'light' ? '#e2e8f0' : '#0a0a0a';
                 }
@@ -3086,9 +3356,77 @@
             });
         })();
 
-        updateTags();
+        if (currentView === 'cloud') startTagsLoop();
         fetchHitokoto();
+
+        // ---- 天气组件 ----
+        (function () {
+            var WMO_ICON = {
+                0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+                45: '🌫️', 48: '🌫️',
+                51: '🌦️', 53: '🌦️', 55: '🌧️',
+                61: '🌧️', 63: '🌧️', 65: '🌧️',
+                71: '🌨️', 73: '🌨️', 75: '❄️',
+                80: '🌦️', 81: '🌧️', 82: '⛈️',
+                95: '⛈️', 96: '⛈️', 99: '⛈️',
+            };
+            var WMO_DESC = {
+                0: '晴', 1: '大体晴', 2: '多云', 3: '阴',
+                45: '雾', 48: '雾凇',
+                51: '小毛雨', 53: '毛雨', 55: '大毛雨',
+                61: '小雨', 63: '中雨', 65: '大雨',
+                71: '小雪', 73: '中雪', 75: '大雪',
+                80: '阵雨', 81: '中阵雨', 82: '强阵雨',
+                95: '雷阵雨', 96: '雷阵雨夹冰雹', 99: '强雷阵雨',
+            };
+
+            function setWidget(icon, temp, desc, location, humidity) {
+                var w = document.getElementById('weather-widget');
+                if (!w) return;
+                w.querySelector('.w-icon').textContent = icon;
+                w.querySelector('.w-temp').textContent = temp;
+                w.querySelector('.w-desc').textContent = desc;
+                document.getElementById('w-location').textContent = location;
+                document.getElementById('w-humidity').textContent = '湿度 ' + humidity + '%';
+                w.closest('.weather-container').classList.add('loaded');
+            }
+
+            function fetchWeather(lat, lon, locationName) {
+                fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+                    '&current=temperature_2m,relativehumidity_2m,weathercode&timezone=auto')
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        var c = d.current;
+                        var code = c.weathercode;
+                        setWidget(
+                            WMO_ICON[code] || '🌡️',
+                            Math.round(c.temperature_2m) + '°',
+                            WMO_DESC[code] || '未知',
+                            locationName,
+                            Math.round(c.relativehumidity_2m)
+                        );
+                    })
+                    .catch(function () {
+                        setWidget('🌡️', '--°', '获取失败', locationName || '--', '--');
+                    });
+            }
+
+            function initWeather() {
+                fetch('https://ipapi.co/json/')
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        var name = d.city || d.region || '未知';
+                        fetchWeather(d.latitude, d.longitude, name);
+                    })
+                    .catch(function () {
+                        fetchWeather(39.9042, 116.4074, '北京');
+                    });
+            }
+
+            initWeather();
+        })();
     </script>
 </body>
+
 
 </html>
