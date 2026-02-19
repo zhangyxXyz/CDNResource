@@ -2664,7 +2664,6 @@
 
             if (currentView === 'grid') {
                 stopTagsLoop();
-                stopHitokotoLoop();
                 cloudContainer.style.display = 'none';
                 compactViewContainer.style.display = 'none';
                 gridViewContainer.style.display = 'block';
@@ -2676,7 +2675,6 @@
                 if (gridViewContainer.innerHTML === '') renderGrid();
             } else if (currentView === 'compact') {
                 stopTagsLoop();
-                stopHitokotoLoop();
                 cloudContainer.style.display = 'none';
                 gridViewContainer.style.display = 'none';
                 compactViewContainer.style.display = 'block';
@@ -2689,7 +2687,6 @@
             } else {
                 cloudContainer.style.display = 'block';
                 startTagsLoop();
-                startHitokotoLoop();
                 setTimeout(() => {
                     if (currentView === 'cloud') {
                         gridViewContainer.style.display = 'none';
