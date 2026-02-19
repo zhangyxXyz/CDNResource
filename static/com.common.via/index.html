@@ -3391,17 +3391,17 @@
 
             function fetchWeather(lat, lon, locationName) {
                 fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
-                    '&current=temperature_2m,relativehumidity_2m,weathercode&timezone=auto')
+                    '&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto')
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
                         var c = d.current;
-                        var code = c.weathercode;
+                        var code = c.weather_code;
                         setWidget(
                             WMO_ICON[code] || '🌡️',
                             Math.round(c.temperature_2m) + '°',
                             WMO_DESC[code] || '未知',
                             locationName,
-                            Math.round(c.relativehumidity_2m)
+                            Math.round(c.relative_humidity_2m)
                         );
                     })
                     .catch(function () {
@@ -3410,11 +3410,13 @@
             }
 
             function initWeather() {
-                fetch('https://ipapi.co/json/')
+                // ipinfo.io: 免费、HTTPS、支持 CORS，loc 格式 "lat,lon"
+                fetch('https://ipinfo.io/json')
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
                         var name = d.city || d.region || '未知';
-                        fetchWeather(d.latitude, d.longitude, name);
+                        var loc = (d.loc || '39.9042,116.4074').split(',');
+                        fetchWeather(parseFloat(loc[0]), parseFloat(loc[1]), name);
                     })
                     .catch(function () {
                         fetchWeather(39.9042, 116.4074, '北京');
