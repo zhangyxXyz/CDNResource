@@ -3409,18 +3409,46 @@
                     });
             }
 
-            function initWeather() {
-                // ipinfo.io: 免费、HTTPS、支持 CORS，loc 格式 "lat,lon"
-                fetch('https://ipinfo.io/json')
+            function initWeatherByIp() {
+                fetch('https://api.ip.sb/geoip')
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
-                        var name = d.city || d.region || '未知';
-                        var loc = (d.loc || '39.9042,116.4074').split(',');
-                        fetchWeather(parseFloat(loc[0]), parseFloat(loc[1]), name);
+                        var region = d.region || '';
+                        var city = d.city || '';
+                        var name = (region && city && region !== city) ? (region + ' ' + city) : (region || city || '未知');
+                        fetchWeather(d.latitude || 39.9042, d.longitude || 116.4074, name);
                     })
                     .catch(function () {
                         fetchWeather(39.9042, 116.4074, '北京');
                     });
+            }
+
+            function initWeather() {
+                if (!navigator.geolocation) {
+                    initWeatherByIp();
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    function (pos) {
+                        var lat = pos.coords.latitude, lon = pos.coords.longitude;
+                        fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lon + '&accept-language=zh')
+                            .then(function (r) { return r.json(); })
+                            .then(function (d) {
+                                var parts = (d.display_name || '').split(', ');
+                                var munic = parts.find(function(p){return p.endsWith('市');}) || '';
+                                var district = parts.find(function(p){return (p.endsWith('区')&&!p.endsWith('社区'))||p.endsWith('县');}) || '';
+                                var name = (munic && district) ? (munic + ' ' + district) : (munic || district || '当前位置');
+                                fetchWeather(lat, lon, name);
+                            })
+                            .catch(function () {
+                                fetchWeather(lat, lon, '当前位置');
+                            });
+                    },
+                    function () {
+                        initWeatherByIp();
+                    },
+                    { timeout: 5000 }
+                );
             }
 
             initWeather();
