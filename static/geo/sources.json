@@ -1,0 +1,27 @@
+{
+  "china": {
+    "url": "https://geojson.cn/api/china/1.6.3/100000.json",
+    "homepage": "https://geojson.cn/data/atlas/china",
+    "version": "1.6.3",
+    "filename": "china-1.6.3-full.json",
+    "retrieved": "2026-09-17T12:22:21.197Z",
+    "upstreamMeta": {
+      "version": "1.6.3",
+      "date": "2025-12-14T16:22:46.484Z",
+      "copyright": "Copyright (c) 2025 GeoJSON.CN",
+      "copyrightShort": "GeoJSON.CN",
+      "copyrightUrl": "https://geojson.cn"
+    },
+    "upstreamSha256": "28b05cad05ec8dab23eec17e87efdce02da4bbdcbd3db4504290d6d8e9336eb4",
+    "features": 36
+  },
+  "world": {
+    "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_110m_admin_0_countries.geojson",
+    "homepage": "https://www.naturalearthdata.com/downloads/110m-cultural-vectors/",
+    "version": "Admin 0 countries 5.1.1 / release v5.1.2",
+    "filename": "world-ne-5.1.2.json",
+    "retrieved": "2026-09-17T12:22:21.649Z",
+    "upstreamSha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f",
+    "features": 177
+  }
+}
