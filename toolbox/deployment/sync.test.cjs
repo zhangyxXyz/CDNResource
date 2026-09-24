@@ -30,6 +30,13 @@ function fixture(t) {
       remote.set(p.Key, { body, etag, metadata: p.Headers['x-cos-meta-md5'] })
       return { ETag: etag }
     }
+    if (method === 'sliceUploadFile') {
+      assert.equal(p.ChunkSize, 1024 * 1024)
+      assert.equal(p.AsyncLimit, 3)
+      const body = fs.readFileSync(p.FilePath), etag = md5(body) + '-2'
+      remote.set(p.Key, { body, etag, metadata: p.Headers['x-cos-meta-md5'] })
+      return { ETag: etag }
+    }
     if (method === 'headObject') {
       const v = remote.get(p.Key)
       return { ETag: v.etag, headers: { etag: v.etag, 'content-length': String(Buffer.byteLength(v.body)), 'x-cos-meta-md5': v.metadata } }
@@ -77,6 +84,14 @@ test('content changes with identical size are uploaded', async t => {
   const f = fixture(t)
   fs.writeFileSync(path.join(f.source, 'same.txt'), 'diff')
   assert.equal((await synchronize({ ...f, apply: true })).upload, 2)
+})
+test('large files use multipart upload and remain unchanged on retry', async t => {
+  const f = fixture(t)
+  fs.writeFileSync(path.join(f.source, 'new.txt'), Buffer.alloc(1024 * 1024 + 1, 'x'))
+  assert.equal((await synchronize({ ...f, apply: true })).upload, 1)
+  assert.equal(f.calls.filter(c => c.method === 'sliceUploadFile').length, 1)
+  assert.equal(f.calls.some(c => c.method === 'putObject'), false)
+  assert.equal((await synchronize({ ...f, apply: true })).upload, 0)
 })
 test('pagination follows markers and rejects stalled or out-of-prefix results', async () => {
   let page = 0

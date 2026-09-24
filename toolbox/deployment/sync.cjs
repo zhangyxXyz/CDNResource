@@ -100,14 +100,27 @@ async function synchronize({ source, call, apply = false, save = () => {}, log =
   await pool(changed, async entry => {
     const file = path.join(source, entry.key.slice(PREFIX.length))
     if (fs.statSync(file).size !== entry.size || await hash(file) !== entry.md5) throw new Error('Source changed before upload')
-    // Recreate the stream for each retry; never reuse a consumed stream.
-    const result = await call('putObject', () => ({ Key: entry.key, Body: fs.createReadStream(file),
+    const multipart = entry.size > 1024 * 1024
+    let lastProgress = 0
+    // Large files resume verified 1 MiB parts through the official SDK.
+    const result = multipart ? await call('sliceUploadFile', {
+      Key: entry.key, FilePath: file, ChunkSize: 1024 * 1024, AsyncLimit: 3,
+      ContentType: contentType(entry.key), Headers: { 'x-cos-meta-md5': entry.md5 },
+      onProgress: info => {
+        if (Date.now() - lastProgress >= 15000 || info.percent === 1) {
+          lastProgress = Date.now()
+          log(`Uploading ${entry.key}: ${info.loaded}/${info.total} bytes`)
+        }
+      }
+    }) : await call('putObject', () => ({ Key: entry.key, Body: fs.createReadStream(file),
       ContentLength: entry.size, ContentType: contentType(entry.key),
       ContentMD5: Buffer.from(entry.md5, 'hex').toString('base64'),
       Headers: { 'x-cos-meta-md5': entry.md5 } }))
-    if (normalize(result.ETag) !== entry.md5) throw new Error('Uploaded ETag mismatch: ' + entry.key)
+    if (!multipart && normalize(result.ETag) !== entry.md5) throw new Error('Uploaded ETag mismatch: ' + entry.key)
     const head = await call('headObject', { Key: entry.key })
-    if (normalize(head.ETag || head.headers?.etag) !== entry.md5 || Number(head.headers?.['content-length']) !== entry.size) {
+    const digestMatches = multipart ? normalize(head.headers?.['x-cos-meta-md5']) === entry.md5 &&
+      normalize(head.ETag || head.headers?.etag) === normalize(result.ETag) : normalize(head.ETag || head.headers?.etag) === entry.md5
+    if (!digestMatches || Number(head.headers?.['content-length']) !== entry.size) {
       throw new Error('Uploaded HEAD mismatch: ' + entry.key)
     }
     uploaded++
@@ -145,7 +158,8 @@ async function main() {
     throw new Error('Missing credentials or unexpected resource COS destination')
   }
   const COS = require('cos-nodejs-sdk-v5'), mime = require('mime-types')
-  const cos = new COS({ SecretId: SECRET_ID, SecretKey: SECRET_KEY, Timeout: 60000, RetryTimes: 0 })
+  const cos = new COS({ SecretId: SECRET_ID, SecretKey: SECRET_KEY, Timeout: 60000,
+    ChunkRetryTimes: 2, ChunkParallelLimit: 3, FileParallelLimit: 2, UploadCheckContentMd5: true })
   const call = (method, parameters) => retry(() => new Promise((resolve, reject) => {
     const args = typeof parameters === 'function' ? parameters() : parameters
     cos[method]({ Bucket: BUCKET, Region: REGION, ...args }, (error, result) => {
