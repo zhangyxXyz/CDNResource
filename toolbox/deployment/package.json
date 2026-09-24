@@ -1,0 +1,11 @@
+{
+  "name": "resource-deployment",
+  "private": true,
+  "packageManager": "pnpm@11.22.0",
+  "scripts": { "test": "node --test *.test.cjs" },
+  "dependencies": {
+    "cos-nodejs-sdk-v5": "2.15.4",
+    "mime-types": "2.1.35",
+    "tencentcloud-sdk-nodejs-cdn": "4.1.307"
+  }
+}

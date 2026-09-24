@@ -1,36 +1,53 @@
 name: cdn资源腾讯云cos同步
 
-on: 
+on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: resource-cos-production
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
-        
+    timeout-minutes: 40
     steps:
-    - name: 检出仓库代码
-      uses: actions/checkout@main
-
-    - name: 安装腾讯云依赖
-      run: |
-        sudo pip install coscmd
-        sudo pip install tccli
-
-    - name: 配置腾讯云依赖
-      env:
-        SECRET_ID: ${{ secrets.TCLOUD_API_ID }}
-        SECRET_KEY: ${{ secrets.TCLOUD_API_KEY }}
-        BUCKET: ${{ secrets.TCLOUD_BUCKET_NAME }}
-        REGION: ${{ secrets.TCLOUD_BUCKET_REGION }}
-      run: |
-        coscmd config -a $SECRET_ID -s $SECRET_KEY -b $BUCKET -r $REGION
-        tccli configure set secretId $SECRET_ID
-        tccli configure set secretKey $SECRET_KEY
-        tccli configure set region $REGION
-
-    - name: 上传到腾讯云COS并刷新CDN
-      run: |
-        coscmd upload -rfs --delete ./static/ /static/
-        tccli cdn PurgePathCache --cli-unfold-argument --Paths https://cdn.onlyzyx.com/ --FlushType flush
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
+      - name: 配置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: 配置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '11.22.0'
+      - name: 安装锁定的发布依赖
+        run: pnpm --dir toolbox/deployment install --frozen-lockfile
+      - name: 验证同步逻辑
+        run: pnpm --dir toolbox/deployment test
+      - name: 差异上传、校验与清理
+        env:
+          SECRET_ID: ${{ secrets.TCLOUD_API_ID }}
+          SECRET_KEY: ${{ secrets.TCLOUD_API_KEY }}
+          BUCKET: ${{ secrets.TCLOUD_BUCKET_NAME }}
+          REGION: ${{ secrets.TCLOUD_BUCKET_REGION }}
+        run: node toolbox/deployment/sync.cjs --apply
+      - name: 刷新资源 CDN 并等待完成
+        env:
+          SECRET_ID: ${{ secrets.TCLOUD_API_ID }}
+          SECRET_KEY: ${{ secrets.TCLOUD_API_KEY }}
+        run: node toolbox/deployment/cdn.cjs
+      - name: 保存发布清单
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resource-release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: toolbox/deployment/artifacts/
+          if-no-files-found: ignore
+          retention-days: 14
